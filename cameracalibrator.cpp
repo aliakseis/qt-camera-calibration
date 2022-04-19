@@ -1,5 +1,8 @@
 #include "cameracalibrator.h"
 
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
+
 CameraCalibrator::CameraCalibrator() :
     flag(0),
     mustInitUndistort(true)
@@ -29,9 +32,9 @@ int CameraCalibrator::addChessboardPoints(const std::vector<Mat>& imageList, cv:
     {
         // get the image in grayscale
         image = imageList[i];
-        cvtColor(image, image,CV_BGR2GRAY);
+        cv::cvtColor(image, image,cv::COLOR_BGR2GRAY);
         // get the chessboard corners
-        findChessboardCorners(image, boardSize, imageCorners);
+        cv::findChessboardCorners(image, boardSize, imageCorners);
         // get subpixel accuracy on the corners
         cv::cornerSubPix(
                     image,
@@ -71,7 +74,7 @@ double CameraCalibrator::calibrate(Size &imageSize)
     //Output rotations and translations vectors
     vector<Mat> rvecs, tvecs;
     // start calibration (you can use solvePnP instead of calibrateCamera)
-    return calibrateCamera(objectPoints, // the 3D points
+    return cv::calibrateCamera(objectPoints, // the 3D points
                            imagePoints,  // the image points
                             imageSize,    // image size
                             cameraMatrix, // output camera matrix
@@ -85,7 +88,7 @@ Mat CameraCalibrator::remap(const Mat &image)
 {
     Mat undistorted;
     if (mustInitUndistort) { // called once per calibration
-        initUndistortRectifyMap(
+        cv::initUndistortRectifyMap(
                         cameraMatrix,  // computed camera matrix
                         distCoeffs, // computed distortion matrix
                         Mat(), // optional rectification (none)

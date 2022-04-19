@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <opencv.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/videoio.hpp>
 #include <QTimer>
 
 #include "cameracalibrator.h"
@@ -32,8 +33,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Mat image, imageSaved;
-    VideoCapture capture;
+    cv::Mat image, imageSaved;
+    cv::VideoCapture capture;
     bool isCameraRunning, isCalibrate;
     QTimer cameraTimer;
     Size boardSize;

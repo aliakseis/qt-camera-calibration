@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -25,14 +28,14 @@ void MainWindow::on_startCameraButton_clicked()
     if(!isCameraRunning)
     {
         // open camera stream
-        capture.open(CV_CAP_ANY); // default: 0
+        capture.open(cv::CAP_ANY); // default: 0
 
         if(!capture.isOpened())
             return;
 
         // set the acquired frame size to the size of its container
-        capture.set(CV_CAP_PROP_FRAME_WIDTH, ui->before_img->size().width());
-        capture.set(CV_CAP_PROP_FRAME_HEIGHT, ui->before_img->size().height());
+        capture.set(cv::CAP_PROP_FRAME_WIDTH, ui->before_img->size().width());
+        capture.set(cv::CAP_PROP_FRAME_HEIGHT, ui->before_img->size().height());
 
         isCameraRunning = true;
 
@@ -83,7 +86,7 @@ void MainWindow::cameraTimerTimeout()
 
         // prepare the image for the Qt format...
         // ... change color channel ordering (from BGR in our Mat to RGB in QImage)
-        cvtColor(image, image, CV_BGR2RGB);
+        cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
 
         // Qt image
         // image.step is needed to properly show some images (due to padding byte added in the Mat creation)
@@ -105,12 +108,12 @@ void MainWindow::cameraTimerTimeout()
 void MainWindow::findAndDrawPoints()
 {
     std::vector<Point2f> imageCorners;
-    bool found = findChessboardCorners(image, boardSize, imageCorners);
+    bool found = cv::findChessboardCorners(image, boardSize, imageCorners);
     // store the image to be used for the calibration process
     if(found)
         image.copyTo(imageSaved);
     // show the found corners on screen, if any
-    drawChessboardCorners(image, boardSize, imageCorners, found);
+    cv::drawChessboardCorners(image, boardSize, imageCorners, found);
 }
 
 void MainWindow::on_takeSnaphotButton_clicked()

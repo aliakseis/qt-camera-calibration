@@ -1,7 +1,7 @@
 #ifndef CAMERACALIBRATOR_H
 #define CAMERACALIBRATOR_H
 
-#include <opencv.hpp>
+#include <opencv2/core/mat.hpp>
 #include <stdio.h>
 #include <stdlib.h>
 
